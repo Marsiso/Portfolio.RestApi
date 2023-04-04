@@ -1,44 +1,8 @@
-using Domain.Entities;
-using Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
-using WebApi.Options;
+using WebApi.Extensions;
 using SwaggerOptions = Swashbuckle.AspNetCore.Swagger.SwaggerOptions;
 
 var builder = WebApplication.CreateBuilder(args);
-var services = builder.Services;
-var config = builder.Configuration;
-var env = builder.Environment;
-
-var connectionString = config.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException(string.Format(
-                           "[Class]: '{0}' [Message]: 'Failed to retrieve connection string from the configuration file'",
-                           nameof(Program)));
-
-services.AddDbContext<DataContext>(options => options.ConfigureDbContext(connectionString, env.IsDevelopment()));
-services
-    .AddIdentity<UserEntity, RoleEntity>()
-    .AddEntityFrameworkStores<DataContext>();
-
-services.AddMvc();
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "RESTful Web API",
-        Version = "v1",
-        Contact = new OpenApiContact
-        {
-            Email = "olsak.marek@outlook.cz",
-            Name = "Marek Olšák",
-            Url = new Uri("https://www.linkedin.com/in/marek-ol%C5%A1%C3%A1k-1715b724a/")
-        },
-        Description = "RESTful Web API to demonstrate .NET knowledge"
-    });
-});
+builder.Services.InstallServicesInAssembly(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
