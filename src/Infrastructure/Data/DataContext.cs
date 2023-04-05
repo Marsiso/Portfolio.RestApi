@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using System.Runtime.CompilerServices;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ public sealed class DataContext : IdentityDbContext<
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
+        
         builder.UseIdentityColumns();
         ReplaceDefaultIdentityMappingScheme(builder);
     }
@@ -38,19 +39,19 @@ public sealed class DataContext : IdentityDbContext<
     {
         const string dbSchemeName = "dbo";
         
-        builder.Entity<IdentityUser<long>>()
+        builder.Entity<UserEntity>()
             .ToTable(nameof(UserEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<IdentityRole<long>>()
+        builder.Entity<RoleEntity>()
             .ToTable(nameof(RoleEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<IdentityUserClaim<long>>()
+        builder.Entity<UserClaimEntity>()
             .ToTable(nameof(UserClaimEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<IdentityRoleClaim<long>>()
+        builder.Entity<RoleClaimEntity>()
             .ToTable(nameof(RoleClaimEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<IdentityUserRole<long>>()
+        builder.Entity<UserRoleEntity>()
+            .ToTable(nameof(UserRoleEntity).Replace("Entity", string.Empty), dbSchemeName);
+        builder.Entity<UserLoginEntity>()
             .ToTable(nameof(UserLoginEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<IdentityUserLogin<long>>()
-            .ToTable(nameof(UserLoginEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<IdentityUserToken<long>>()
+        builder.Entity<UserTokenEntity>()
             .ToTable(nameof(UserTokenEntity).Replace("Entity", string.Empty), dbSchemeName);
 
         return builder;

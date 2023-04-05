@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Data;
 using WebApi.Installers.Interfaces;
 
 namespace WebApi.Installers;
@@ -15,10 +16,12 @@ public sealed class DbInstaller : IInstaller
         
         services.AddDbContext<DataContext>(options =>
         {
-            options.UseSqlServer(connectionString);
+            options.UseSqlServer(connectionString, buider => buider.MigrationsAssembly(nameof(WebApi)));
             options.EnableSensitiveDataLogging(environment.IsDevelopment());
             options.EnableServiceProviderCaching();
             options.UseLoggerFactory(DataContext.PropertyLoggerFactory);
         });
+
+        //services.AddHostedService<Seed>();
     }
 }
