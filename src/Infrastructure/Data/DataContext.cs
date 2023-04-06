@@ -25,8 +25,6 @@ public sealed class DataContext : IdentityDbContext<
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
-        builder.UseIdentityColumns();
         ReplaceDefaultIdentityMappingScheme(builder);
     }
 
@@ -38,21 +36,44 @@ public sealed class DataContext : IdentityDbContext<
     private static ModelBuilder ReplaceDefaultIdentityMappingScheme(ModelBuilder builder)
     {
         const string dbSchemeName = "dbo";
+
+        builder.Entity<UserEntity>(b =>
+        {
+            b.ToTable(nameof(UserEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
         
-        builder.Entity<UserEntity>()
-            .ToTable(nameof(UserEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<RoleEntity>()
-            .ToTable(nameof(RoleEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<UserClaimEntity>()
-            .ToTable(nameof(UserClaimEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<RoleClaimEntity>()
-            .ToTable(nameof(RoleClaimEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<UserRoleEntity>()
-            .ToTable(nameof(UserRoleEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<UserLoginEntity>()
-            .ToTable(nameof(UserLoginEntity).Replace("Entity", string.Empty), dbSchemeName);
-        builder.Entity<UserTokenEntity>()
-            .ToTable(nameof(UserTokenEntity).Replace("Entity", string.Empty), dbSchemeName);
+        builder.Entity<RoleEntity>(b =>
+        {
+            b.ToTable(nameof(RoleEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
+        
+        builder.Entity<UserClaimEntity>(b =>
+        {
+            b.ToTable(nameof(UserClaimEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
+        
+        builder.Entity<RoleClaimEntity>(b =>
+        {
+            b.ToTable(nameof(RoleClaimEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
+
+        builder.Entity<UserRoleEntity>(b =>
+        {
+            b.HasKey(key => new { key.UserId, key.RoleId });
+            b.ToTable(nameof(UserRoleEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
+
+        builder.Entity<UserLoginEntity>(b =>
+        {
+            b.HasKey(key => new { key.ProviderKey, key.LoginProvider });
+            b.ToTable(nameof(UserLoginEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
+
+        builder.Entity<UserTokenEntity>(b =>
+        {
+            b.HasKey(key => new { key.UserId, key.LoginProvider, key.Name });
+            b.ToTable(nameof(UserTokenEntity).Replace("Entity", string.Empty), dbSchemeName);
+        });
 
         return builder;
     }

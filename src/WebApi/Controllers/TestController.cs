@@ -22,7 +22,6 @@ public sealed class TestController : ApiControllerBase<TestController>
     [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
-
         return Ok(Data);
     }
 }

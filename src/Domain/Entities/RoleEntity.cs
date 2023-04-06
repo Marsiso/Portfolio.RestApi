@@ -20,39 +20,6 @@ public sealed class RoleEntity : IdentityRole<long>, ICloneable
         InitializeMemberRoles();
     }
     
-    public async Task<Result<RoleEntity>> AddClaimsAsync(RoleManager<RoleEntity> roleManager, string?[]? claims)
-    {
-        try
-        {
-            if (claims == null) return new Result<RoleEntity>(this);
-            var roleClaims = await roleManager.GetClaimsAsync(this);
-            foreach (var claim in claims)
-            {
-                if (string.IsNullOrEmpty(claim)) continue;
-                if (!RoleClaimEntity.Permissions.Contains(claim, EqualityComparer<string>.Default))
-                {
-                    return new Result<RoleEntity>(new InvalidOperationException(
-                        $"[Class]: '{nameof(RoleEntity)}' [Message]: 'Role claim '{claim}' does not exist in the current context'"));
-                }
-
-                if (!roleClaims.Any(c => c.Type == "Permission" && c.Value == claim))
-                {
-                    await roleManager.AddClaimAsync(this, new Claim("Permission", claim));
-                }
-            }
-
-            return new Result<RoleEntity>(this);
-        }
-        catch (Exception exception)
-        {
-            var msg = string.Format("[Class]: '{0}' [Message]: '{1}'",
-                nameof(RoleEntity),
-                string.Join(", ", exception.Message));
-            
-            return new Result<RoleEntity>(new Exception(msg));
-        }
-    }
-    
     public async Task<Result<RoleEntity>> CreateAsync(
         RoleManager<RoleEntity> roleManager)
     {
@@ -62,10 +29,7 @@ public sealed class RoleEntity : IdentityRole<long>, ICloneable
             if (roleEntity != null) return new Result<RoleEntity>(this);
 
             var result = await roleManager.CreateAsync(this);
-            if (result.Succeeded)
-            {
-                return new Result<RoleEntity>(this);
-            }
+            if (result.Succeeded) return new Result<RoleEntity>(this);
 
             var errors = result.Errors.Select(error => error.Description).ToList();
             var msg = string.Format("[Class]: '{0}' [Message]: '{1}'",
@@ -78,7 +42,7 @@ public sealed class RoleEntity : IdentityRole<long>, ICloneable
         {
             var msg = string.Format("[Class]: '{0}' [Message]: '{1}'",
                 nameof(RoleEntity),
-                string.Join(", ", exception.Message));
+                exception);
             
             return new Result<RoleEntity>(new Exception(msg));
         }

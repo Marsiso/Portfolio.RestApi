@@ -1,4 +1,7 @@
-﻿using Infrastructure.Data;
+﻿using Application.Interfaces;
+using Infrastructure.Data;
+using Infrastructure.Data.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
 using WebApi.Installers.Interfaces;
@@ -22,6 +25,10 @@ public sealed class DbInstaller : IInstaller
             options.UseLoggerFactory(DataContext.PropertyLoggerFactory);
         });
 
-        //services.AddHostedService<Seed>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRepositoryManager, RepositoryManager>();
+
+        services.AddScoped<IIdentityManager, IdentityManager>();
+        services.AddHostedService<Seed>();
     }
 }

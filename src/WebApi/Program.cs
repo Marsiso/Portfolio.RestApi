@@ -1,13 +1,12 @@
-using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Data;
 using WebApi.Extensions;
 using SwaggerOptions = Swashbuckle.AspNetCore.Swagger.SwaggerOptions;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.InstallServicesInAssembly(builder.Configuration, builder.Environment);
-builder.Services.AddHostedService<Seed>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

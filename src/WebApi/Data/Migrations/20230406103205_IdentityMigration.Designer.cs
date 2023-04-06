@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace WebApi.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230405184714_IdentityMigration")]
+    [Migration("20230406103205_IdentityMigration")]
     partial class IdentityMigration
     {
         /// <inheritdoc />
@@ -173,10 +173,10 @@ namespace WebApi.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserLoginEntity", b =>
                 {
-                    b.Property<string>("LoginProvider")
+                    b.Property<string>("ProviderKey")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProviderKey")
+                    b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
@@ -185,7 +185,7 @@ namespace WebApi.Data.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                    b.HasKey("ProviderKey", "LoginProvider");
 
                     b.HasIndex("UserId");
 
